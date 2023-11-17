@@ -4,29 +4,18 @@ import Button from '../Button';
 
 import styles from './ToastPlayground.module.css';
 import Toast from "../Toast";
+import ToastShelf from "../ToastShelf";
+import {ToastContext} from "../ToastsProvider";
 
 const VARIANT_OPTIONS = ['notice', 'warning', 'success', 'error'];
 
 
 function ToastPlayground() {
 
-    const [toasts, setToasts] = React.useState([])
+    const { makeToast} = React.useContext(ToastContext)
     const [message, setMessage] = React.useState()
     const [toastType, setToastType] = React.useState(VARIANT_OPTIONS[0]);
-    const MakeToast = (e) => {
-        const newToast = {
-            message: message,
-            toastType: toastType,
-            toast_id: Math.random(),
-        }
-        console.log(newToast)
-        setToasts([...toasts, newToast])
-    }
 
-    const removeToast = (index) => {
-        const toastCopy = [...toasts];
-        setToasts(toastCopy.filter(t => t !== index))
-    }
     return (<div className={styles.wrapper}>
         <header>
             <img alt="Cute toast mascot" src="/toast.png"/>
@@ -56,13 +45,14 @@ function ToastPlayground() {
                 >
                     {VARIANT_OPTIONS.map(variant => {
                         return (<label htmlFor={`variant-${variant}`} key={`variantId-${variant}`}
-                                       onChange={(e) => setToastType(e.target.value)}>
+                                       >
                             <input
                                 id={`variant-${variant}`}
                                 type="radio"
                                 name="variant"
                                 value={variant}
                                 checked={toastType === variant}
+                                onChange={(e) => setToastType(e.target.value)}
                             /> {variant}
                         </label>)
                     })
@@ -77,13 +67,11 @@ function ToastPlayground() {
                 <div
                     className={`${styles.inputWrapper} ${styles.radioWrapper}`}
                 >
-                    <Button onClick={MakeToast}>Pop Toast!</Button>
+                    <Button onClick={() => makeToast(message,toastType)}>Pop Toast!</Button>
                 </div>
             </div>
         </div>
-        {toasts.map((toast, index) => {
-            return (<Toast toast={toast} dismissToast={() => removeToast(toast)}></Toast>)
-        })}
+        <ToastShelf />
     </div>);
 }
 
