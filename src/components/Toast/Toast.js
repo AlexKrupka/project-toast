@@ -18,16 +18,23 @@ const ICONS_BY_VARIANT = {
   error: AlertOctagon,
 };
 
-function Toast() {
-  return (
-    <div className={`${styles.toast} ${styles.notice}`}>
-      <div className={styles.iconContainer}>
-        <Info size={24} />
+function Toast({toast, removeToast}) {
+    console.log(`toast made - ${JSON.stringify(toast)}` )
+    const { toastId, message, toastType} = toast;
+    const IconType = ICONS_BY_VARIANT[toastType];
+
+    return (
+    <div className={`${styles.toast} ${styles[toastType]}`}>
+      <div className={`${styles.iconContainer}`}>
+        <IconType size={24} />
       </div>
       <p className={styles.content}>
-        16 photos have been uploaded
+          <VisuallyHidden>
+              {`${toastType}-`}
+          </VisuallyHidden>
+        {message}
       </p>
-      <button className={styles.closeButton}>
+      <button className={styles.closeButton} onClick={()=> removeToast(toastId)} aria-label={'Dismiss message'} aria-live={"off"}>
         <X size={24} />
         <VisuallyHidden>Dismiss message</VisuallyHidden>
       </button>
@@ -35,4 +42,4 @@ function Toast() {
   );
 }
 
-export default Toast;
+export default React.memo(Toast);
